@@ -70,3 +70,4 @@ guids*
 /Client/com.unity.package-manager-ui.EditorTests.csproj
 /Server/Server/bin
 /Server/Server/obj
+/Client/build
