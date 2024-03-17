@@ -14,28 +14,25 @@ namespace Client
 {
     public class NetClient : MonoBehaviour
     {
-        public string clientName;
-        [SerializeField] private int portToConnect = 6321;
-        public string password;
+        [SerializeField] private int port = 6321;
         private bool socketReady;
         private TcpClient socket;
         private NetworkStream stream;
         private StreamWriter writer;
         private StreamReader reader;
-        public InputField clientNameInputField;
-        public InputField serverAddressInputField;
-        public InputField passwordInputField;
-        public List<Unit> unitsOnMap = new List<Unit>();
-        public CultureInfo culture = (CultureInfo)CultureInfo.CurrentCulture.Clone();
         private Reactor reactor;
         private void Start()
         {
+            Application.runInBackground = true;
             reactor = new Reactor(this);
             DontDestroyOnLoad(gameObject);
-            culture.NumberFormat.NumberDecimalSeparator = ".";
+
+            CultureInfo customCulture = (CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
+            customCulture.NumberFormat.NumberDecimalSeparator = ".";
+            System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
         }
 
-        public bool ConnectToServer(string host, int port)
+        public bool ConnectToServer(string host)
         {
             if (socketReady)
                 return false;
@@ -51,7 +48,7 @@ namespace Client
             }
             catch (Exception e)
             {
-                Debug.Log("Socket error " + e.Message);
+                Logger.Log("Socket error " + e.Message);
             }
 
             return socketReady;
@@ -84,15 +81,13 @@ namespace Client
         private void OnIncomingData(string data)
         {
             string[] aData = data.Split('|');
-            Debug.Log("Received from server: " + data);
+            Logger.Log("Received from server: " + data);
 
             if (reactor.rections.ContainsKey(aData[0]))
                 reactor.rections[aData[0]].Process(aData);
             else
-                Debug.Log("Unrecognizable command received");
+                Logger.Log("Unrecognizable command received");
         }
-
-
 
         private void OnApplicationQuit()
         {
@@ -102,7 +97,7 @@ namespace Client
         {
             CloseSocket();
         }
-        private void CloseSocket()
+        public void CloseSocket()
         {
             if (!socketReady)
                 return;
@@ -111,22 +106,6 @@ namespace Client
             reader.Close();
             socket.Close();
             socketReady = false;
-        }
-
-
-        public void ConnectToServerButton()
-        {
-            password = passwordInputField.text;
-            clientName = clientNameInputField.text;
-            CloseSocket();
-            try
-            {
-                ConnectToServer(serverAddressInputField.text, portToConnect);
-            }
-            catch (Exception e)
-            {
-                Debug.Log(e.Message);
-            }
         }
     }
 }

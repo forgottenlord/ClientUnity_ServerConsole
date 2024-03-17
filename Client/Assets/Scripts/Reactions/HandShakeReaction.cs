@@ -10,7 +10,7 @@ namespace Client.Reactions
     {
         public override void Process(string[] message)
         {
-            client.Send("Iam|" + client.clientName + "|" + client.password);
+            client.Send("Iam|" + World.clientName + "|" + World.password);
         }
 
         public HandShakeReaction(NetClient _client)

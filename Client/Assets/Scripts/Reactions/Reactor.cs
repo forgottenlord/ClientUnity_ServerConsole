@@ -17,7 +17,7 @@ namespace Client.Reactions
                 { "Authenticated", new AuthReaction(client) },
                 { "UnitSpawned", new SpawnReaction(client) },
                 { "UnitMoved", new MoveReaction(client) },
-                { "Synchronizing", new SyncReaction(client) },
+                { "SyncMsg", new SyncReaction(client) },
             };
         }
     }

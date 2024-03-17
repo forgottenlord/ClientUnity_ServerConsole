@@ -12,25 +12,20 @@ namespace Client.Reactions
     {
         public override void Process(string[] aData)
         {
-            if (aData[1] == client.clientName)
+            if (aData[1] != World.clientName)
             {
                 return;
             }
             else
             {
-                int parsed;
-                Int32.TryParse(aData[2], out parsed);
-                float parsedX = float.Parse(aData[3], client.culture);
-                float parsedY = float.Parse(aData[4], client.culture);
-                float parsedZ = float.Parse(aData[5], client.culture);
-                foreach (Unit unit in client.unitsOnMap)
+                float parsedX = float.Parse(aData[2]);
+                float parsedY = float.Parse(aData[3]);
+                float parsedZ = float.Parse(aData[4]);
+                foreach (var u in World.units)
                 {
-                    if (unit.unitID == parsed)
+                    if (u.Key == aData[1])
                     {
-                        parsedX = float.Parse(aData[3], client.culture);
-                        parsedY = float.Parse(aData[4], client.culture);
-                        parsedZ = float.Parse(aData[5], client.culture);
-                        unit.MoveTo(new Vector3(parsedX, parsedY, parsedZ));
+                        u.Value.MoveTo(new Vector3(parsedX, parsedY, parsedZ));
                     }
                 }
             }

@@ -20,24 +20,24 @@ namespace Client
             GameObject go = GameObject.Find("Client");
             if (go == null)
             {
-                Debug.Log("Client object not found");
+                Logger.Log("Client object not found");
                 SceneManager.LoadScene("ClientLogin");
                 return;
             }
             client = go.GetComponent<NetClient>();
             if (client == null)
             {
-                Debug.Log("Couldn't find client script");
+                Logger.Log("Couldn't find client script");
                 return;
             }
             map = GameObject.Find("Terrain");
             if (map == null)
             {
-                Debug.Log("Couldn't find map");
+                Logger.Log("Couldn't find map");
                 return;
             }
 
-            client.Send("SynchronizeRequest|");
+            client.Send("SyncReq|");
         }
 
         void Update()
@@ -54,7 +54,7 @@ namespace Client
                     float y = hit.point.y;
                     float z = hit.point.z;
                     controllerUnit.MoveTo(hit.point);
-                    client.Send("Moving|" + controllerUnit.unitID + "|" + x + "|" + y + "|" + z + "|");
+                    client.Send("Moving|" + World.clientName + "|" + x + "|" + y + "|" + z + "|");
                 }
             }
         }
