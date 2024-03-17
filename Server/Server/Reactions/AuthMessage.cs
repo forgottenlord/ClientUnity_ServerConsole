@@ -12,7 +12,8 @@ namespace Server.NetMessages
         public override void Process(ConnectedClient sender, string[] aData)
         {
             //bool authenticated = Database.AuthenticateUser(aData[1], aData[2]);
-            bool authenticated = clients.Find(c=> c.endPoint == sender.endPoint) != null;
+            //bool authenticated = clients.Find(c=> c.endPoint == sender.endPoint) != null;
+            bool authenticated = clients.Find(c => c.clientName == sender.clientName) != null;
             if (authenticated)
             {
                 foreach (ConnectedClient client in clients)

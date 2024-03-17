@@ -14,21 +14,13 @@ namespace Server.NetMessages
             Unit unit = new Unit();
 
             unit.clientName = sender.clientName;
-            //give a new ID to the new units
-            int newid = 0;
-            foreach (Unit u in units)
-            {
-                if (u.unitID >= newid) { newid = u.unitID + 1; }
-            }
 
-            unit.unitID = newid;
             unit.posX = 1.0f;
             unit.posY = 0.0f;
             unit.posZ = 1.0f;
             units.Add(unit);
             server.Broadcast(clients, "UnitSpawned|" +
                 sender.clientName + "|" +
-                unit.unitID + "|" +
                 unit.posX + "|" +
                 unit.posY + "|" +
                 unit.posZ);

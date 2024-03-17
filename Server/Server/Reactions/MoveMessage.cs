@@ -11,9 +11,8 @@ namespace Server.NetMessages
     {
         public override void Process(ConnectedClient sender, string[] aData)
         {
-            server.Broadcast(clients, "UnitMoved|" + sender.clientName + "|" + aData[1] + "|" + aData[2] + "|" + aData[3] + "|" + aData[4]);
-            int id;
-            Int32.TryParse(aData[1], out id);
+            server.Broadcast(clients, "UnitMoved|" + sender.clientName + "|" + //aData[1] + "|" +
+                aData[2] + "|" + aData[3] + "|" + aData[4]);
             float parsedX;
             float parsedY;
             float parsedZ;
@@ -22,7 +21,7 @@ namespace Server.NetMessages
             float.TryParse(aData[4], out parsedZ);
             foreach (Unit u in units)
             {
-                if (u.unitID == id)
+                if (u.clientName == aData[1])
                 {
                     u.posX = parsedX;
                     u.posY = parsedY;

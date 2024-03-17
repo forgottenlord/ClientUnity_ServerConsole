@@ -31,9 +31,9 @@ namespace Server
                 messages = new Dictionary<string, Message>()
                 {
                     { "Iam", new AuthMessage(this)},
-                    { "SynchronizeRequest", new SyncMessage(this)},
                     { "SpawnUnit", new SpawnMessage(this)},
                     { "Moving", new MoveMessage(this)},
+                    { "SyncMsg", new SyncMessage(this)},
                 };
                 server.Start();
                 StartListening();
@@ -115,17 +115,19 @@ namespace Server
                 SynchronizeUnits();
                 ResyncNeeded = false;
             }
+            ///синхронизация персонажей
+            SynchronizeUnits();
 
+            Console.Clear();
             for (int n = 0; n < clients.Count; n++)
             {
-                Console.Clear();
                 if (units.Count > n)
-                    Console.WriteLine("Client {0} = {1}; {2};         pos:{3},{4},{5}", n,
+                    Console.WriteLine(string.Format("{0}){1}; {2};         pos:{3},{4},{5}", n,
                         clients[n].clientName, clients[n].stringEndPoint,
-                        units[n].posX, units[n].posY, units[n].posZ);
+                        units[n].posX, units[n].posY, units[n].posZ));
                 else
-                    Console.WriteLine("Client {0} = {1}; {2};         dead", n,
-                        clients[n].clientName, clients[n].stringEndPoint);
+                    Console.WriteLine(string.Format("{0}){1}; {2};         dead", n,
+                        clients[n].clientName, clients[n].stringEndPoint));
             }
         }
 
@@ -152,29 +154,10 @@ namespace Server
             Broadcast(clients[clients.Count - 1], "WhoAreYou|");
         }
 
-        private bool IsConnected(TcpClient c)
-        {
-            try
-            {
-                if (c != null && c.Client != null && c.Client.Connected)
-                {
-                    if (c.Client.Poll(0, SelectMode.SelectRead))
-                        return !(c.Client.Receive(new byte[1], SocketFlags.Peek) == 0);
-
-                    return true;
-                }
-                else
-                    return false;
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
         // Server Send
         public void Broadcast(List<ConnectedClient> cl, string data)
         {
+            Logger.Log(data);
             foreach (ConnectedClient sc in cl)
             {
                 try
@@ -210,13 +193,13 @@ namespace Server
         //syncing all clients
         public void SynchronizeUnits()
         {
-            string dataToSend = "Synchronizing|" + units.Count;
+            string dataToSend = "SyncMsg|" + units.Count;
             foreach (Unit u in units)
             {
-                dataToSend += "|" + (u.unitID) + "|" + u.posX + "|" + u.posY + "|" + u.posZ;
+                dataToSend += "|" + (u.clientName) + "|" + u.posX + "|" + u.posY + "|" + u.posZ;
             }
             Broadcast(clients, dataToSend);
-            Console.WriteLine("\r\nSynchronization request sent: " + dataToSend);
+            Console.WriteLine("\r\n SyncMsg request sent: " + dataToSend);
         }
     }
 
